@@ -1,20 +1,22 @@
-// pages/index.tsx
 import { useState } from "react";
 
 export default function Home() {
-  const [entry, setEntry] = useState("");
+  const [input, setInput] = useState("");
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     setLoading(true);
+    setResponse("");
+
     try {
       const res = await fetch("/api/diary", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ entry }),
+        body: JSON.stringify({ input }),
       });
 
       const data = await res.json();
@@ -31,31 +33,37 @@ export default function Home() {
   };
 
   return (
-    <main style={{ padding: "2rem", fontFamily: "Arial, sans-serif" }}>
-      <h1>🧠 Yapay Zekâ Günlüğü</h1>
-      <textarea
-        rows={10}
-        cols={60}
-        placeholder="Bugün ne hissettin, ne düşündün?"
-        value={entry}
-        onChange={(e) => setEntry(e.target.value)}
-        style={{ marginBottom: "1rem", padding: "1rem", fontSize: "1rem" }}
-      />
-      <br />
-      <button
-        onClick={handleSubmit}
-        disabled={loading}
-        style={{
-          padding: "0.5rem 1rem",
-          fontSize: "1rem",
-          cursor: "pointer",
-        }}
-      >
-        {loading ? "Yükleniyor..." : "Gönder"}
-      </button>
-      <div style={{ marginTop: "2rem", whiteSpace: "pre-wrap" }}>
-        {response}
+    <div style={{ padding: "2rem", fontFamily: "Arial, sans-serif" }}>
+      <h1>Yapay Zeka Günlüğü</h1>
+      <form onSubmit={handleSubmit} style={{ marginBottom: "1rem" }}>
+        <textarea
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          rows={5}
+          cols={50}
+          placeholder="Bugün ne yaşadın, ne düşündün?"
+          style={{ width: "100%", padding: "1rem" }}
+        />
+        <button
+          type="submit"
+          disabled={loading}
+          style={{
+            marginTop: "1rem",
+            padding: "0.5rem 1.5rem",
+            cursor: "pointer",
+            backgroundColor: "#0070f3",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+          }}
+        >
+          {loading ? "Yükleniyor..." : "Gönder"}
+        </button>
+      </form>
+      <div>
+        <strong>Yanıt:</strong>
+        <p>{response}</p>
       </div>
-    </main>
+    </div>
   );
 }
