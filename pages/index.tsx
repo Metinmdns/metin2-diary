@@ -26,6 +26,7 @@ export default function Home() {
     setResponse("Bilinmeyen bir hata oluştu.");
   }
 }
+
   };
 
   return (
