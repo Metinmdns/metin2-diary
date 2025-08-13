@@ -19,14 +19,13 @@ export default function Home() {
       });
       const data = await res.json();
       setResponse(data.result || "Cevap alınamadı.");
-    } catch (err) {
+    } } catch (err) {
   if (err instanceof Error) {
     setResponse("Hata oluştu: " + err.message);
   } else {
     setResponse("Bilinmeyen bir hata oluştu.");
   }
 }
-
   };
 
   return (
