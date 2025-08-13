@@ -1,58 +1,61 @@
+// pages/index.tsx
 import { useState } from "react";
 
 export default function Home() {
-  const [input, setInput] = useState("");
+  const [entry, setEntry] = useState("");
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
-    if (!input.trim()) return;
     setLoading(true);
-    setResponse("");
     try {
-      const res = await fetch("/api/metin2", {
+      const res = await fetch("/api/diary", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text: input }),
+        body: JSON.stringify({ entry }),
       });
+
       const data = await res.json();
       setResponse(data.result || "Cevap alınamadı.");
     } catch (err) {
-  if (err instanceof Error) {
-    setResponse("Hata oluştu: " + err.message);
-  } else {
-    setResponse("Bilinmeyen bir hata oluştu.");
-  }
-}
-
+      if (err instanceof Error) {
+        setResponse("Hata oluştu: " + err.message);
+      } else {
+        setResponse("Bilinmeyen bir hata oluştu.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div style={{ maxWidth: 600, margin: "40px auto", padding: 20, fontFamily: "Arial" }}>
-      <h1>Metin 2 - Yapay Günlük</h1>
+    <main style={{ padding: "2rem", fontFamily: "Arial, sans-serif" }}>
+      <h1>🧠 Yapay Zekâ Günlüğü</h1>
       <textarea
-        rows={6}
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        style={{ width: "100%", padding: 10, fontSize: 16 }}
-        placeholder="Bugün nasıldın?"
+        rows={10}
+        cols={60}
+        placeholder="Bugün ne hissettin, ne düşündün?"
+        value={entry}
+        onChange={(e) => setEntry(e.target.value)}
+        style={{ marginBottom: "1rem", padding: "1rem", fontSize: "1rem" }}
       />
+      <br />
       <button
         onClick={handleSubmit}
         disabled={loading}
-        style={{ marginTop: 10, padding: "10px 20px", fontSize: 16 }}
+        style={{
+          padding: "0.5rem 1rem",
+          fontSize: "1rem",
+          cursor: "pointer",
+        }}
       >
-        {loading ? "Gönderiliyor..." : "Gönder"}
+        {loading ? "Yükleniyor..." : "Gönder"}
       </button>
-
-      {response && (
-        <div style={{ marginTop: 20, background: "#f3f3f3", padding: 15, borderRadius: 8 }}>
-          <strong>Metin 2'nin yanıtı:</strong>
-          <p>{response}</p>
-        </div>
-      )}
-    </div>
+      <div style={{ marginTop: "2rem", whiteSpace: "pre-wrap" }}>
+        {response}
+      </div>
+    </main>
   );
 }
