@@ -23,7 +23,7 @@ export default function Home() {
       }
 
       const data = await res.json();
-      // API: pages/api/metin2.ts -> { reply: string }
+      // /api/metin2 -> { reply: string } döndürüyor
       setResponse(typeof data.reply === "string" ? data.reply : "Cevap alınamadı.");
     } catch (err) {
       if (err instanceof Error) {

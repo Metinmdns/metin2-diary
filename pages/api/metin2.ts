@@ -24,5 +24,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   });
 
   const data = await response.json();
-  res.status(200).json({ reply: data.choices[0].message.content });
+  res.status(200).json({ reply: data.choices?.[0]?.message?.content ?? "" });
 }
