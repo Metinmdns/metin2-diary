@@ -1,9 +1,9 @@
 import { useState } from "react";
 
 export default function Metin2Diary() {
-  const [entry, setEntry] = useState("");
-  const [response, setResponse] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [entry, setEntry] = useState<string>("");
+  const [response, setResponse] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleSubmit = async () => {
     setLoading(true);
