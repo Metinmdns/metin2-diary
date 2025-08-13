@@ -11,6 +11,7 @@ export default function Home() {
     setLoading(true);
     setResponse("");
 
+    
     try {
       const res = await fetch("/api/metin2", {
         method: "POST",
