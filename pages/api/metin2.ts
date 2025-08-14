@@ -13,12 +13,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      console.error("Missing OPENAI_API_KEY");
+      console.error("[metin2] Missing OPENAI_API_KEY");
       return res.status(500).json({ error: "OPENAI_API_KEY is not set" });
     }
 
-    const model = process.env.OPENAI_API_MODEL || "gpt-4o-mini"; // istersen "gpt-4o"
-    const resp = await fetch("https://api.openai.com/v1/chat/completions", {
+    const model = process.env.OPENAI_API_MODEL || "gpt-4o-mini"; // istersen Vercel env'de değiştir
+    const oaUrl = "https://api.openai.com/v1/chat/completions";
+
+    const resp = await fetch(oaUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -38,30 +40,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }),
     });
 
-    const text = await resp.text(); // önce text al, sonra gerektiğinde parse et
+    const raw = await resp.text(); // önce ham metin
     if (!resp.ok) {
-      // Vercel Runtime Logs için
-      console.error("OpenAI error", resp.status, text);
-      let detail: any = {};
+      // Vercel Runtime Logs'a ayrıntı düşsün
+      console.error("[metin2] OpenAI error", resp.status, raw);
+      let detail: string = raw;
       try {
-        detail = JSON.parse(text);
-      } catch {}
+        const parsed = JSON.parse(raw);
+        detail = parsed?.error?.message || raw;
+      } catch {
+        /* ham metni kullan */
+      }
       return res.status(resp.status).json({
         error: "OpenAI error",
-        detail: detail?.error?.message || text || "Unknown error",
+        detail,
       });
     }
 
-    // OK ise JSON'a güvenle parse et
-    const data = JSON.parse(text);
-    const reply = data?.choices?.[0]?.message?.content ?? "";
+    const data = JSON.parse(raw);
+    const reply: string = data?.choices?.[0]?.message?.content ?? "";
+
     return res.status(200).json({ reply });
   } catch (e: unknown) {
     if (e instanceof Error) {
-      console.error("Server error:", e.message);
+      console.error("[metin2] Server error:", e.message);
       return res.status(500).json({ error: e.message });
     }
-    console.error("Unknown server error");
+    console.error("[metin2] Unknown server error");
     return res.status(500).json({ error: "Unknown server error" });
   }
 }
