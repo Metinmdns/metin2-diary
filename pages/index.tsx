@@ -11,7 +11,6 @@ export default function Home() {
     setLoading(true);
     setResponse("");
 
-    
     try {
       const res = await fetch("/api/metin2", {
         method: "POST",
@@ -24,8 +23,12 @@ export default function Home() {
       }
 
       const data = await res.json();
-      // /api/metin2 -> { reply: string } döndürüyor
-      setResponse(typeof data.reply === "string" ? data.reply : "Cevap alınamadı.");
+      // Hem eski frontend (result) hem yeni API (reply) ile uyumlu:
+      const txt =
+        (typeof data?.reply === "string" && data.reply) ||
+        (typeof data?.result === "string" && data.result) ||
+        "";
+      setResponse(txt || "Cevap alınamadı.");
     } catch (err) {
       if (err instanceof Error) {
         setResponse("Hata oluştu: " + err.message);
