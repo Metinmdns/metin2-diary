@@ -23,7 +23,6 @@ export default function Home() {
       }
 
       const data = await res.json();
-      // Hem eski frontend (result) hem yeni API (reply) ile uyumlu:
       const txt =
         (typeof data?.reply === "string" && data.reply) ||
         (typeof data?.result === "string" && data.result) ||

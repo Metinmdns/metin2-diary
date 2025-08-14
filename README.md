@@ -1,20 +1,19 @@
-# Metin 2 – Yapay Günlük
+# Metin 2 – Yapay Günlük (Fixed)
 
-Bu proje, kullanıcının günlük yazılarına GPT-4 ile yanıt veren yapay zekâ iç sesi "Metin 2"yi simüle eder.
+Çalışır Next.js + TypeScript proje iskeleti. `index.tsx` ve `api/metin2.ts` birbiriyle uyumlu, `tsconfig.json` tek obje.
 
 ## Kurulum
-
-1. Bu projeyi klonlayın veya zip dosyasını çıkarın.
-2. `OPENAI_API_KEY` içeren bir `.env.local` dosyası oluşturun.
-3. `npm install` ile bağımlılıkları yükleyin.
-4. `npm run dev` ile yerel sunucuda çalıştırın.
-
-## Vercel Deploy
-
-GitHub’a yükledikten sonra Vercel'e bağlayarak otomatik deploy edebilirsiniz.
-
-## Gerekli Environment Variable
-
+1) `OPENAI_API_KEY` ile `.env.local` oluşturun (lokalde) veya Vercel Project Settings > Environment Variables'a ekleyin.
 ```
-OPENAI_API_KEY=your_openai_api_key
+OPENAI_API_KEY=sk-... 
 ```
+2) `npm install`
+3) `npm run dev`
+
+## Deploy (Vercel)
+- Repo'ya push edin.
+- Vercel otomatik build eder. Gerekirse **Redeploy > Clear build cache**.
+
+## Notlar
+- `tsconfig.json` içinde `useUnknownInCatchVariables: false` aktiftir (TS catch hatası yaşamazsınız).
+- API `POST /api/metin2` endpoint'i `{ entry: string }` bekler ve `{ reply: string }` döndürür.
