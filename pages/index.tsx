@@ -18,7 +18,18 @@ export default function Home() {
         body: JSON.stringify({ entry }),
       });
 
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) {
+        // Hata mesajını sunucudan mümkün olduğunca ayrıntılı al
+        const text = await res.text();
+        let msg: string = res.statusText || `HTTP ${res.status}`;
+        try {
+          const j = JSON.parse(text);
+          msg = j?.detail || j?.error || msg;
+        } catch {
+          if (text) msg = text;
+        }
+        throw new Error(String(msg));
+      }
 
       const data = await res.json();
       const txt =
@@ -40,24 +51,50 @@ export default function Home() {
   return (
     <main style={{ maxWidth: 700, margin: "40px auto", padding: 16, fontFamily: "Arial, sans-serif" }}>
       <h1 style={{ marginBottom: 16 }}>🧠 Metin 2 – Yapay Günlük</h1>
+
       <textarea
         rows={8}
         value={entry}
         onChange={(e) => setEntry(e.target.value)}
         placeholder="Bugün ne hissettin / ne düşündün? Buraya yaz..."
-        style={{ width: "100%", fontSize: 16, padding: 12, borderRadius: 8, border: "1px solid #ddd" }}
+        style={{
+          width: "100%",
+          fontSize: 16,
+          padding: 12,
+          borderRadius: 8,
+          border: "1px solid #ddd",
+          outline: "none",
+        }}
       />
+
       <div style={{ marginTop: 12 }}>
         <button
           onClick={handleSubmit}
           disabled={loading}
-          style={{ padding: "10px 16px", borderRadius: 8, background: "#111827", color: "#fff", border: "none" }}
+          style={{
+            padding: "10px 16px",
+            border: "none",
+            borderRadius: 8,
+            background: "#111827",
+            color: "#fff",
+            cursor: "pointer",
+          }}
         >
           {loading ? "Gönderiliyor..." : "Gönder"}
         </button>
       </div>
+
       {response && (
-        <div style={{ marginTop: 20, background: "#f3f4f6", border: "1px solid #e5e7eb", borderRadius: 8, padding: 16, whiteSpace: "pre-wrap" }}>
+        <div
+          style={{
+            marginTop: 20,
+            background: "#f3f4f6",
+            border: "1px solid #e5e7eb",
+            borderRadius: 8,
+            padding: 16,
+            whiteSpace: "pre-wrap",
+          }}
+        >
           <strong>Metin 2:</strong>
           <div style={{ marginTop: 8 }}>{response}</div>
         </div>
